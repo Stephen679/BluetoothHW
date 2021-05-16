@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SecondFragment"
+    android:orientation="vertical">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/byteTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Second Fragment"
+        android:layout_gravity="right"
+        android:textSize="30sp"/>
+    <TextView
+        android:id="@+id/MACaddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Second Fragment"
+        android:layout_gravity="right"
+        android:textSize="30sp"/>
+    <TextView
+        android:id="@+id/rssi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Second Fragment"
+        android:layout_gravity="right"
+        android:textSize="30sp"/>
+    <Button
+        android:id="@+id/back"
+        android:layout_gravity="right"
+        android:text="back"
+        android:background="#000000"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        />
+
+</LinearLayout>
