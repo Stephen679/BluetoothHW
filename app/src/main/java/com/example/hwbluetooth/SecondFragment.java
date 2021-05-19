@@ -78,7 +78,6 @@ public class SecondFragment extends Fragment {
             MAC.setText("MAC位址 : "+bundle.getString("MAC"));
             TextView rssi = view.findViewById(R.id.rssi);
             rssi.setText("RSSI訊號 : "+bundle.getString("rssi"));
-
         }
         Button button = view.findViewById(R.id.back);
         button.setOnClickListener(new View.OnClickListener() {

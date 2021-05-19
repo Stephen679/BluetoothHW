@@ -10,12 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     private OnItemClick onItemClick;
-    private List<ScannedData> arrayList = new ArrayList<>();
+    private int pos;
+    private List<DeviceData> arrayList = new ArrayList<>();
+    private HashMap<String, DeviceData> hashMap = new HashMap<>();
     public ItemAdapter(OnItemClick onItemClick) {
         this.onItemClick = onItemClick;
     }
@@ -23,7 +26,7 @@ class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         this.arrayList.clear();
         notifyDataSetChanged();
     }
-    public void addDevice(List<ScannedData> arrayList){
+    public void addDevice(List<DeviceData> arrayList){
         this.arrayList = arrayList;
         notifyDataSetChanged();
     }
@@ -51,13 +54,14 @@ class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.Detail.setOnClickListener(v -> {
             onItemClick.onItemClick(arrayList.get(position));
         });
+        pos = position;
     }
     @Override
     public int getItemCount() {
         return arrayList.size();
     }
     interface OnItemClick{
-        void onItemClick(ScannedData currentDevice);//按一下得知當前device
+        void onItemClick(DeviceData currentDevice);//按一下得知當前device
     }
 
 
