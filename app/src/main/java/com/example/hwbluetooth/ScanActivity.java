@@ -12,6 +12,10 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanRecord;
+import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,6 +28,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class ScanActivity extends AppCompatActivity {
     BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final int REQUEST_FINE_LOCATION_PERMISSION = 10;
@@ -35,10 +40,11 @@ public class ScanActivity extends AppCompatActivity {
     private int count = 1;
     RecyclerView recyclerView;
     NavController controller;
-
+    BluetoothLeScanner mBluetoothLeScanner
+            =mBluetoothAdapter.getBluetoothLeScanner();
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     @Nullable
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_container);
@@ -58,7 +64,8 @@ public class ScanActivity extends AppCompatActivity {
                 if (Scanning) {
                     Scanning = false;
                     temp.setText("開始掃描");
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+//                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    mBluetoothLeScanner.stopScan(startScanCallback);
                 }else{
                     if(count==1){
                         //在第一次按按鈕時初始化並得到fragment的recycler view，而非在oncreate時
@@ -71,7 +78,7 @@ public class ScanActivity extends AppCompatActivity {
                     temp.setText("停止掃描");
                     ItemAdapter.clearDevice();
                     foundDevice.clear();
-                    mBluetoothAdapter.startLeScan(mLeScanCallback);
+                    mBluetoothLeScanner.startScan(startScanCallback);
                 }
             }
         });
@@ -100,9 +107,7 @@ public class ScanActivity extends AppCompatActivity {
         }else finish();
     }
 
-
-//掃描
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+/*@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
@@ -110,12 +115,26 @@ public class ScanActivity extends AppCompatActivity {
                 foundDevice.add(new ScannedData(device.getAddress(),String.valueOf(rssi),scanRecord.toString()));
                 ArrayList newList = getNonoverlapped(foundDevice);
                 runOnUiThread(()->{//返回主執行續
-                    foundDevice = newList;
-                    ItemAdapter.addDevice(foundDevice);//動態變動的，setItemadpter也只會在onCreate做一次
+                    ItemAdapter.addDevice(newList);//動態變動的，setItemadpter也只會在onCreate做一次
                     // 因為我在後面有呼叫notifydatasetchanged所以資料才可以有變動
                     //當資料有變動的時候，記得要呼叫 notifyDataSetChanged
                 });
             }).start();
+        }
+    };*/
+
+
+    private final ScanCallback startScanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            BluetoothDevice device = result.getDevice();
+            ScanRecord mScanRecord = result.getScanRecord();
+            String address = device.getAddress();
+            byte[] content = mScanRecord.getBytes();
+            int mRssi = result.getRssi();
+            ArrayList newList = getNonoverlapped(foundDevice);
+            newList.add(new ScannedData(address,String.valueOf(mRssi),String.valueOf(content)));
+            ItemAdapter.addDevice(newList);
         }
     };
 
@@ -147,7 +166,7 @@ public class ScanActivity extends AppCompatActivity {
         return -1;
     }
     com.example.hwbluetooth.ItemAdapter.OnItemClick onItemClick = new com.example.hwbluetooth.ItemAdapter.OnItemClick() {
-        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onItemClick(ScannedData selectedDevice) {
             Toast.makeText(ScanActivity.this, selectedDevice.getAddress(),Toast.LENGTH_SHORT)
